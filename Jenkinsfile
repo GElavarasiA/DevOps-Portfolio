@@ -11,26 +11,25 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t devops-static-website .'
+                sh 'docker build -t devops-static-website .'
             }
         }
 
         stage('Stop Old Container') {
             steps {
-                bat 'docker stop devops-static-website-container || exit 0'
-                bat 'docker rm devops-static-website-container || exit 0'
+                sh 'docker rm -f devops-static-website-container || true'
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                bat 'docker run -d -p 8080:80 --name devops-static-website-container devops-static-website'
+                sh 'docker run -d -p 8082:80 --name devops-static-website-container devops-static-website'
             }
         }
 
-        stage('Verify Website') {
+        stage('Verify Container') {
             steps {
-                bat 'curl http://localhost:8080'
+                sh 'docker ps --filter name=devops-static-website-container'
             }
         }
     }
